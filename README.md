@@ -1,5 +1,5 @@
-# Hub2.0
-
+# Hub2.0 WIP
+This was built completly by ai, This is a not complete and is a work in progress
 A modern, customizable dashboard for managing your applications, services, and bookmarks.
 
 ## Features
