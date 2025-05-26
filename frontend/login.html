@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - RamRaid Hub</title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <style>
+    body {
+      background-color: #1f1f1f;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .login-container {
+      background-color: #2c2c2c;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 191, 165, 0.5);
+      min-width: 300px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #00bfa5;
+      margin-bottom: 20px;
+    }
+
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border: 1px solid #555;
+      border-radius: 5px;
+      background-color: #1f1f1f;
+      color: #fff;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 15px;
+      background-color: #00bfa5;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #00a090;
+    }
+
+    button:disabled {
+      background-color: #666;
+      cursor: not-allowed;
+    }
+
+    .error {
+      color: #ff4d4d;
+      text-align: center;
+      margin-top: 10px;
+      min-height: 20px;
+    }
+
+    .info {
+      color: #00bfa5;
+      text-align: center;
+      margin-top: 10px;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <form class="login-container" id="loginForm">
+    <h2>Login to RamRaid Hub</h2>
+    <input type="password" id="password" placeholder="Enter password" required autocomplete="current-password" />
+    <button type="submit" id="loginBtn">Login</button>
+    <div class="error" id="errorMsg"></div>
+    <div class="info">Default password is: admin123</div>
+  </form>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const loginForm = document.getElementById('loginForm');
+      const loginBtn = document.getElementById('loginBtn');
+      const errorMsg = document.getElementById('errorMsg');
+      const passwordInput = document.getElementById('password');
+
+    async function handleLogin(e) {
+      e.preventDefault();
+        
+        loginBtn.disabled = true;
+        errorMsg.textContent = "";
+
+        try {
+          console.log("Attempting login...");
+          const res = await fetch("/api/login", {
+        method: "POST",
+            credentials: "include",
+            headers: { 
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+            body: JSON.stringify({ password: passwordInput.value })
+      });
+
+          console.log("Login response status:", res.status);
+          const data = await res.json();
+          console.log("Login response:", data);
+
+          if (res.ok && data.success) {
+            errorMsg.style.color = "#00bfa5";
+            errorMsg.textContent = "Login successful! Redirecting...";
+            setTimeout(() => {
+        window.location.href = "/";
+            }, 500);
+      } else {
+            errorMsg.textContent = data.error || "Incorrect password.";
+            loginBtn.disabled = false;
+          }
+        } catch (err) {
+          console.error("Login error:", err);
+          errorMsg.textContent = "Failed to connect to server. Please try again.";
+          loginBtn.disabled = false;
+      }
+    }
+
+      loginForm.addEventListener('submit', handleLogin);
+
+    // Auto-redirect if already authenticated
+      fetch("/api/auth/status", {
+        credentials: "include",
+        headers: {
+          "Accept": "application/json"
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+          console.log("Auth check response:", data);
+        if (data.authenticated) {
+          window.location.href = "/";
+        }
+        })
+        .catch(err => {
+          console.error("Auth check error:", err);
+        });
+
+      // Focus password input on load
+      passwordInput.focus();
+      });
+  </script>
+</body>
+</html>

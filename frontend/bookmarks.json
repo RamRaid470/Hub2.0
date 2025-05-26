@@ -1,0 +1,17 @@
+[
+  {
+    "name": "GitHub",
+    "url": "https://github.com",
+    "icon": "https://img.icons8.com/ios-filled/24/github.png"
+  },
+  {
+    "name": "Reddit",
+    "url": "https://reddit.com",
+    "icon": "https://img.icons8.com/ios-filled/24/reddit.png"
+  },
+  {
+    "name": "TEst",
+    "url": "test.com",
+    "icon": "https://img.icons8.com/ios-filled/24/github.png"
+  }
+]
